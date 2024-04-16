@@ -26,15 +26,15 @@ const Sidebar = () => {
           <SignedIn>
             {/* top links */}
             <ul className="sidebar-nav_elements">
-              {navLinks.map((link) => (
-                <SideBarElement link={link} pathname={pathname} />
+              {navLinks.map((link, index) => (
+                <SideBarElement key={index} link={link} pathname={pathname} />
               ))}
             </ul>
 
             {/* bottom links pushed down magically */}
             <ul className="sidebar-nav_elements">
-              {bottomLinks.map((link) => (
-                <SideBarElement link={link} pathname={pathname} />
+              {bottomLinks.map((link, index) => (
+                <SideBarElement key={index} link={link} pathname={pathname} />
               ))}
               <li className="flex-center cursor-pointer gap-2 p-4">
                 <UserButton afterSignOutUrl="/" showName={true} />
