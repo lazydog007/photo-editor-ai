@@ -1,6 +1,6 @@
-import MobileNav from "@/components/shared/MobileNav"
-import Sidebar from "@/components/shared/Sidebar"
 import React from "react"
+import MobileNav from "../../components/shared/MobileNav"
+import Sidebar from "../../components/shared/Sidebar"
 
 type Props = { children: React.ReactNode }
 

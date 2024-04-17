@@ -3,10 +3,10 @@ import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
 import Image from "next/image"
 import Link from "next/link"
 
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { bottomLinks, navLinks } from "@/constants"
 import { usePathname } from "next/navigation"
+import { bottomLinks, navLinks } from "../../constants"
 import { Button } from "../ui/button"
+import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet"
 
 const MobileNav = () => {
   const pathName = usePathname()

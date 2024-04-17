@@ -1,9 +1,9 @@
 "use client"
-import { bottomLinks, navLinks } from "@/constants"
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { bottomLinks, navLinks } from "../../constants"
 import { Button } from "../ui/button"
 import SideBarElement from "./SideBarElement"
 
