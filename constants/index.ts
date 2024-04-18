@@ -24,14 +24,14 @@ export const navLinks = [
     route: "/transformations/add/recolor",
     icon: "/assets/icons/filter.svg",
   },
-]
-
-export const bottomLinks = [
   {
     label: "Background Remove",
     route: "/transformations/add/removeBackground",
     icon: "/assets/icons/camera.svg",
   },
+]
+
+export const bottomLinks = [
   {
     label: "Profile",
     route: "/profile",
@@ -126,28 +126,28 @@ export const transformationTypes = {
   restore: {
     type: "restore",
     title: "Restore Image",
-    subTitle: "Refine images by removing noise and imperfections",
+    subtitle: "Refine images by removing noise and imperfections",
     config: { restore: true },
     icon: "image.svg",
   },
   removeBackground: {
     type: "removeBackground",
     title: "Background Remove",
-    subTitle: "Removes the background of the image using AI",
+    subtitle: "Removes the background of the image using AI",
     config: { removeBackground: true },
     icon: "camera.svg",
   },
   fill: {
     type: "fill",
     title: "Generative Fill",
-    subTitle: "Enhance an image's dimensions using AI outpainting",
+    subtitle: "Enhance an image's dimensions using AI outpainting",
     config: { fillBackground: true },
     icon: "stars.svg",
   },
   remove: {
     type: "remove",
     title: "Object Remove",
-    subTitle: "Identify and eliminate objects from images",
+    subtitle: "Identify and eliminate objects from images",
     config: {
       remove: { prompt: "", removeShadow: true, multiple: true },
     },
@@ -156,7 +156,7 @@ export const transformationTypes = {
   recolor: {
     type: "recolor",
     title: "Object Recolor",
-    subTitle: "Identify and recolor objects from the image",
+    subtitle: "Identify and recolor objects from the image",
     config: {
       recolor: { prompt: "", to: "", multiple: true },
     },
