@@ -21,6 +21,7 @@ import { z } from "zod"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { CustomField } from "./CustomField"
+import MediaUploader from "./MediaUploader"
 export const formSchema = z.object({
   title: z.string(),
   aspectRatio: z.string(),
@@ -213,24 +214,41 @@ const TransformationForm = ({
             )}
           </div>
         )}
+        <h3 className="h3-bold text-dark-600">Original</h3>
+        <div className="media-uploader-field">
+          <CustomField
+            control={form.control}
+            name="publicId"
+            className="flex size-full flex-col"
+            render={({ field }) => (
+              <MediaUploader
+                onValueChange={field.onChange}
+                setImage={setImage}
+                publicId={field.value}
+                image={image}
+                type={type}
+              />
+            )}
+          />
+        </div>
+        <div className="flex flex-col gap-4">
+          <Button
+            type="button"
+            className="submit-button capitalize"
+            disabled={isTransforming || newTransformation === null}
+            onClick={onTransformHandler}
+          >
+            {isTransforming ? "Transforming..." : "Apply Transformation"}
+          </Button>
 
-        <div className="flex flex-col gap-4"></div>
-        <Button
-          type="button"
-          className="submit-button capitalize"
-          disabled={isTransforming || newTransformation === null}
-          onClick={onTransformHandler}
-        >
-          {isTransforming ? "Transforming..." : "Apply Transformation"}
-        </Button>
-
-        <Button
-          type="submit"
-          className="submit-button capitalize"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Submitting..." : "Save Image"}
-        </Button>
+          <Button
+            type="submit"
+            className="submit-button capitalize"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Submitting..." : "Save Image"}
+          </Button>
+        </div>
       </form>
     </Form>
   )

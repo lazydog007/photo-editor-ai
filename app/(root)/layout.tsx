@@ -1,3 +1,4 @@
+import { Toaster } from "@/components/ui/toaster"
 import React from "react"
 import MobileNav from "../../components/shared/MobileNav"
 import Sidebar from "../../components/shared/Sidebar"
@@ -12,6 +13,7 @@ const Layout = ({ children }: Props) => {
       <div className="root-container">
         <div className="wrapper">{children}</div>
       </div>
+      <Toaster />
     </main>
   )
 }
