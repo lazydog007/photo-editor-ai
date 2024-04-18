@@ -10,11 +10,16 @@ import {
 } from "@/components/ui/select"
 import {
   aspectRatioOptions,
+  creditFee,
   defaultValues,
   transformationTypes,
 } from "@/constants"
+import { addImage, updateImage } from "@/lib/actions/image.actions"
+import { updateCredits } from "@/lib/actions/user.actions"
 import { AspectRatioKey, debounce, deepMergeObjects } from "@/lib/utils"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { getCldImageUrl } from "next-cloudinary"
+import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -22,6 +27,7 @@ import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { CustomField } from "./CustomField"
 import MediaUploader from "./MediaUploader"
+import TransformedImage from "./TransformedImage"
 export const formSchema = z.object({
   title: z.string(),
   aspectRatio: z.string(),
@@ -47,6 +53,7 @@ const TransformationForm = ({
   const [isTransforming, setIsTransforming] = useState(false)
   const [transformationConfig, setTransformationConfig] = useState(config)
   const [isPending, startTransition] = useTransition()
+  const router = useRouter()
 
   // we might have some data if we are editing
   const initialValues =
@@ -67,9 +74,71 @@ const TransformationForm = ({
   })
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitting(true)
+
+    if (data || image) {
+      const transformationUrl = getCldImageUrl({
+        width: image?.width,
+        height: image?.height,
+        src: image?.publicId,
+        ...transformationConfig,
+      })
+
+      const imageData = {
+        title: values.title,
+        publicId: image?.publicId,
+        transformationType: type,
+        width: image?.width,
+        height: image?.height,
+        config: transformationConfig,
+        secureUrl: image?.secureUrl,
+        transformationUrl: transformationUrl,
+        aspectRatio: values.aspectRatio,
+        prompt: values.prompt,
+        color: values.color,
+      }
+
+      if (action === "Add") {
+        try {
+          const newImage = await addImage({
+            image: imageData,
+            userId,
+            path: "/",
+          })
+
+          if (newImage) {
+            form.reset()
+            setImage(data)
+            router.push(`/transformations/${newImage._id}`)
+          }
+        } catch (error) {
+          console.log(error)
+        }
+      }
+
+      if (action === "Update") {
+        try {
+          const updatedImage = await updateImage({
+            image: {
+              ...imageData,
+              _id: data._id,
+            },
+            userId,
+            path: "/",
+          })
+
+          if (updatedImage) {
+            form.reset()
+            setImage(data)
+            router.push(`/transformations/${updatedImage._id}`)
+          }
+        } catch (error) {
+          console.log(error)
+        }
+      }
+    }
+    setIsSubmitting(false)
     console.log(values)
   }
 
@@ -109,7 +178,7 @@ const TransformationForm = ({
     return onChangeField(value)
   }
 
-  const onTransformHandler = () => {
+  const onTransformHandler = async () => {
     setIsTransforming(true)
 
     setTransformationConfig(
@@ -118,8 +187,9 @@ const TransformationForm = ({
 
     setNewTransformation(null)
 
-    startTransition(() => {
-      // await updateCredits(userId, creditFee)
+    // TODO: FIX MongoDB to store credits in numbers and not string
+    startTransition(async () => {
+      await updateCredits(userId, creditFee)
     })
   }
 
@@ -214,7 +284,6 @@ const TransformationForm = ({
             )}
           </div>
         )}
-        <h3 className="h3-bold text-dark-600">Original</h3>
         <div className="media-uploader-field">
           <CustomField
             control={form.control}
@@ -229,6 +298,14 @@ const TransformationForm = ({
                 type={type}
               />
             )}
+          />
+          <TransformedImage
+            image={image}
+            type={type}
+            title={form.getValues("title")}
+            isTransforming={isTransforming}
+            setIsTransforming={setIsTransforming}
+            transformationConfig={transformationConfig}
           />
         </div>
         <div className="flex flex-col gap-4">

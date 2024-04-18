@@ -7,8 +7,8 @@ export interface IUser extends Document {
   photo?: string
   firstName?: string
   lastName?: string
-  planId?: string
-  creditBalance?: string
+  planId?: Number
+  creditBalance?: Number
 }
 
 const UserSchema = new Schema({
@@ -18,8 +18,8 @@ const UserSchema = new Schema({
   photo: { type: String, required: true },
   firstName: { type: String },
   lastName: { type: String },
-  planId: { type: String, default: 1 },
-  creditBalance: { type: String, default: 10 },
+  planId: { type: Number, default: 1 },
+  creditBalance: { type: Number, default: 10 },
 })
 
 const User = models?.User || model("User", UserSchema)
