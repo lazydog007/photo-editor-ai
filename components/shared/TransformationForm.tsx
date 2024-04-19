@@ -188,6 +188,7 @@ const TransformationForm = ({
     setNewTransformation(null)
 
     // TODO: FIX MongoDB to store credits in numbers and not string
+    // TODO: Figure out why there is no loading animation when transforming? stuck in Transforming...
     startTransition(async () => {
       await updateCredits(userId, creditFee)
     })
