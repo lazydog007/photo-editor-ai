@@ -99,6 +99,10 @@ const TransformationForm = ({
         color: values.color,
       }
 
+      // secureUrl is coming as undefined
+      console.log("imageData", imageData)
+      console.log("image?.secureURL ", imageData?.secureUrl)
+
       if (action === "Add") {
         try {
           const newImage = await addImage({
@@ -108,6 +112,7 @@ const TransformationForm = ({
           })
 
           if (newImage) {
+            console.log("newImage", newImage)
             form.reset()
             setImage(data)
             router.push(`/transformations/${newImage._id}`)
@@ -169,11 +174,11 @@ const TransformationForm = ({
       setNewTransformation((prevState: any) => ({
         ...prevState, // this passes the previous values
         [type]: {
-          ...prevState[type],
-          [fieldName === "prompt" ? "prompt" : "color"]: value,
+          ...prevState?.[type],
+          [fieldName === "prompt" ? "prompt" : "to"]: value,
         },
       }))
-    }, 1000) //waits a bit befre sending the request while tying
+    }, 1000)() //waits a bit befre sending the request while tying
 
     return onChangeField(value)
   }
@@ -218,8 +223,8 @@ const TransformationForm = ({
                 onValueChange={(value) =>
                   onSelectFieldHandler(value, field.onChange)
                 }
+                value={field.value}
               >
-                {" "}
                 <SelectTrigger className="select-field">
                   <SelectValue placeholder="Select size" />
                 </SelectTrigger>
@@ -285,6 +290,7 @@ const TransformationForm = ({
             )}
           </div>
         )}
+
         <div className="media-uploader-field">
           <CustomField
             control={form.control}
@@ -303,7 +309,7 @@ const TransformationForm = ({
           <TransformedImage
             image={image}
             type={type}
-            title={form.getValues("title")}
+            title={form.getValues().title}
             isTransforming={isTransforming}
             setIsTransforming={setIsTransforming}
             transformationConfig={transformationConfig}

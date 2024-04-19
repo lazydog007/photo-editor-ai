@@ -78,12 +78,6 @@ export async function deleteUser(clerkId: string) {
 export async function updateCredits(userId: string, creditFee: number) {
   try {
     await connectToDatabase()
-    const typeofcreditFee = typeof creditFee
-    console.log("\n")
-    console.log("creditFee: ", creditFee)
-    console.log("creditFee type: ", typeofcreditFee)
-    console.log("\n")
-
     const updatedUserCredits = await User.findOneAndUpdate(
       { _id: userId },
       { $inc: { creditBalance: creditFee } },
