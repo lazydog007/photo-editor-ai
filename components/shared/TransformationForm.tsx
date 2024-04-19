@@ -99,10 +99,6 @@ const TransformationForm = ({
         color: values.color,
       }
 
-      // secureUrl is coming as undefined
-      console.log("imageData", imageData)
-      console.log("image?.secureURL ", imageData?.secureUrl)
-
       if (action === "Add") {
         try {
           const newImage = await addImage({
