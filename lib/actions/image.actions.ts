@@ -104,6 +104,7 @@ export async function getAllImages({
 }) {
   try {
     await connectToDatabase()
+
     cloudinary.config({
       cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
       api_key: process.env.CLOUDINARY_API_KEY,
@@ -117,8 +118,6 @@ export async function getAllImages({
       expression += ` AND ${searchQuery}`
     }
 
-    console.log("expression", expression)
-
     const { resources } = await cloudinary.search
       .expression(expression)
       .execute()
@@ -126,6 +125,7 @@ export async function getAllImages({
     const resourceIds = resources.map((resource: any) => resource.public_id)
 
     let query = {}
+
     if (searchQuery) {
       query = {
         publicId: {
@@ -134,7 +134,6 @@ export async function getAllImages({
       }
     }
 
-    // images per page
     const skipAmount = (Number(page) - 1) * limit
 
     const images = await populateUser(Image.find(query))
@@ -142,16 +141,12 @@ export async function getAllImages({
       .skip(skipAmount)
       .limit(limit)
 
-    console.log("images", images)
-
     const totalImages = await Image.find(query).countDocuments()
-    const savedImages = await Image.find().countDocuments
-    console.log("totalImages", totalImages)
-    console.log("savedImages", savedImages)
+    const savedImages = await Image.find().countDocuments()
 
     return {
       data: JSON.parse(JSON.stringify(images)),
-      totalPages: Math.ceil(totalImages / limit), // total pages
+      totalPages: Math.ceil(totalImages / limit),
       savedImages,
     }
   } catch (error) {
