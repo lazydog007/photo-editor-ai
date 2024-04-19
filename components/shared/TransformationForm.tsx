@@ -108,6 +108,10 @@ const TransformationForm = ({
             path: "/",
           })
 
+          console.log("\n")
+          console.log("newImage", newImage)
+          console.log("newImage._id", newImage._id)
+
           if (newImage) {
             console.log("newImage", newImage)
             form.reset()
