@@ -7,6 +7,8 @@ import User from "../database/models/user.model"
 import { connectToDatabase } from "../database/mongoose"
 import { handleError } from "../utils"
 
+import { v2 as cloudinary } from "cloudinary"
+
 // modifies a Mongoose query object to include additional data when the query is executed
 const populateUser = (query: any) =>
   query.populate({
@@ -84,6 +86,74 @@ export async function getImageById(imageId: string) {
     const image = await populateUser(Image.findById(imageId))
 
     return JSON.parse(JSON.stringify(image))
+  } catch (error) {
+    handleError(error)
+  }
+}
+
+// GET ALL IMAGES
+
+export async function getAllImages({
+  limit = 9,
+  page = 1,
+  searchQuery = "",
+}: {
+  limit?: number
+  page: number
+  searchQuery?: string
+}) {
+  try {
+    await connectToDatabase()
+    cloudinary.config({
+      cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+      secure: true,
+    })
+
+    let expression = "folder=photo-editor-ai"
+
+    if (searchQuery) {
+      expression += ` AND ${searchQuery}`
+    }
+
+    console.log("expression", expression)
+
+    const { resources } = await cloudinary.search
+      .expression(expression)
+      .execute()
+
+    const resourceIds = resources.map((resource: any) => resource.public_id)
+
+    let query = {}
+    if (searchQuery) {
+      query = {
+        publicId: {
+          $in: resourceIds,
+        },
+      }
+    }
+
+    // images per page
+    const skipAmount = (Number(page) - 1) * limit
+
+    const images = await populateUser(Image.find(query))
+      .sort({ updatedAt: -1 })
+      .skip(skipAmount)
+      .limit(limit)
+
+    console.log("images", images)
+
+    const totalImages = await Image.find(query).countDocuments()
+    const savedImages = await Image.find().countDocuments
+    console.log("totalImages", totalImages)
+    console.log("savedImages", savedImages)
+
+    return {
+      data: JSON.parse(JSON.stringify(images)),
+      totalPages: Math.ceil(totalImages / limit), // total pages
+      savedImages,
+    }
   } catch (error) {
     handleError(error)
   }
